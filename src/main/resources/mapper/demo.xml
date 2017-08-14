@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.teamstack.repository.DemoMapper">
+
+    <resultMap id="resultMap" type="cn.teamstack.entity.DemoEntity">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+    </resultMap>
+
+    <select id="findById" resultMap="resultMap">
+        SELECT
+            id,
+            name
+        FROM T_DEMO AS d
+        WHERE
+            d.id = #{id}
+    </select>
+    <insert id="insert">
+        INSERT INTO T_DEMO
+        (
+        name
+        )
+        VALUES
+        (
+        #{demo.name}
+        )
+    </insert>
+</mapper>
