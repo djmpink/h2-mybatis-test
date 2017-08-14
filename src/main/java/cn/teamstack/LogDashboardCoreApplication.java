@@ -7,7 +7,7 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 
 @SpringBootApplication
 @EnableAdminServer
-@EnableWebSocket
+//@EnableWebSocket
 public class LogDashboardCoreApplication {
 
 	public static void main(String[] args) {
