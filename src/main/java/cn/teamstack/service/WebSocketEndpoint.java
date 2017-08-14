@@ -22,7 +22,7 @@ public class WebSocketEndpoint {
     private static final Logger logger = LoggerFactory.getLogger(WebSocketEndpoint.class);
 
     @Value("${customer.log.file.path}")
-    private String logPath="/Users/zhouli/project/pomelo/log-dashboard-core/log/process.log";
+    public String logPath;//TODO 没取到配置文件
 
     private Process process;
     private InputStream inputStream;
