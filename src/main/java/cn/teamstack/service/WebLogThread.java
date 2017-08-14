@@ -25,7 +25,7 @@ public class WebLogThread extends Thread {
         try {
             while ((line = reader.readLine()) != null) {
                 // 将实时日志通过WebSocket发送给客户端，给每一行添加一个HTML换行
-                session.getBasicRemote().sendText(line + "<br>");
+                session.getBasicRemote().sendText(line);
             }
         } catch (IOException e) {
             e.printStackTrace();
