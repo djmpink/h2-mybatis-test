@@ -1,6 +1,5 @@
 package cn.teamstack.config;
 
-import cn.teamstack.service.WebSocketEndpoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.server.standard.ServerEndpointExporter;
@@ -15,8 +14,4 @@ public class WebSocketConfiguration {
         return new ServerEndpointExporter();
     }
 
-    @Bean
-    public WebSocketEndpoint webLogMonitor() {
-        return new WebSocketEndpoint();
-    }
 }

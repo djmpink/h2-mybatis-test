@@ -8,7 +8,6 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 
 @SpringBootApplication
 @EnableAdminServer
-@ComponentScan
 @EnableWebSocket
 public class LogDashboardCoreApplication {
 

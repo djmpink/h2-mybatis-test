@@ -1,9 +1,13 @@
 package cn.teamstack.service;
 
+import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
+import org.springframework.web.socket.server.standard.SpringConfigurator;
 
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
@@ -18,14 +22,21 @@ import java.io.InputStream;
  */
 @ServerEndpoint(value = "/websocket")
 @Component
-public class WebSocketEndpoint {
+public class WebSocketEndpoint implements ApplicationContextAware {
     private static final Logger logger = LoggerFactory.getLogger(WebSocketEndpoint.class);
-
-    @Value("${customer.log.file.path}")
-    public String logPath;//TODO 没取到配置文件
 
     private Process process;
     private InputStream inputStream;
+
+    private static ApplicationContext applicationContext = null;
+
+    private LogService logService;
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        WebSocketEndpoint.applicationContext = applicationContext;
+    }
+
+
 
     /**
      * 新的WebSocket请求开启
@@ -34,6 +45,9 @@ public class WebSocketEndpoint {
     public void onOpen(Session session) {
         try {
             // 执行tail -f命令
+            logger.info("session:{},query:{}", JSON.toJSONString(session.getId()),JSON.toJSONString(session.getQueryString()));
+            LogService logService= (LogService) applicationContext.getBean("logService");
+            String logPath = logService.getById(2).path;
             logger.info("日志路径：{}", logPath);
             process = Runtime.getRuntime().exec("tail -f " + logPath);
             inputStream = process.getInputStream();
@@ -66,4 +80,6 @@ public class WebSocketEndpoint {
     public void onError(Throwable thr) {
         thr.printStackTrace();
     }
+
+
 }
