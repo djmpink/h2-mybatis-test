@@ -7,7 +7,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
-import org.springframework.web.socket.server.standard.SpringConfigurator;
 
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
@@ -30,12 +29,10 @@ public class WebSocketEndpoint implements ApplicationContextAware {
 
     private static ApplicationContext applicationContext = null;
 
-    private LogService logService;
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         WebSocketEndpoint.applicationContext = applicationContext;
     }
-
 
 
     /**
