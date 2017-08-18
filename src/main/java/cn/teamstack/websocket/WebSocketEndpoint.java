@@ -65,6 +65,9 @@ public class WebSocketEndpoint implements ApplicationContextAware {
                 case "cmd":
                     cmdInfo(req.content, session);
                     break;
+                case "search":
+                    search(req.content, session);
+                    break;
             }
         }
     }
@@ -105,6 +108,35 @@ public class WebSocketEndpoint implements ApplicationContextAware {
             String[] c = cmds.toArray(new String[cmds.size()]);
             logger.info("c:{}", JSON.toJSONString(c));
             process = Runtime.getRuntime().exec(c, null, dir);
+
+            InputStream inputStream = process.getInputStream();
+
+            // 启动新的线程，防止InputStream阻塞处理WebSocket的线程
+            SendThread thread = new SendThread(inputStream, session);
+            thread.start();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void search(String value, Session session) {
+        try {
+            if (StringUtils.isEmpty(value)) {
+                return;
+            }
+            LogService logService = (LogService) applicationContext.getBean("logService");
+            String logPath = logService.getById(1).path;
+            logger.info("日志路径：{}", logPath);
+
+            List<String> cmds = Lists.newArrayList();
+            cmds.add("/bin/sh");
+            cmds.add("-c");
+            cmds.add("grep " + value +" "+ logPath);
+
+            String[] c = cmds.toArray(new String[cmds.size()]);
+            logger.info("c:{}", JSON.toJSONString(c));
+            process = Runtime.getRuntime().exec(c, null, null);
 
             InputStream inputStream = process.getInputStream();
 
