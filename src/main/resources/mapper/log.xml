@@ -17,18 +17,48 @@
         WHERE
             id = #{id}
     </select>
+    <select id="find" resultMap="resultMap">
+        SELECT log_id,
+            IP,
+            name,
+            path,
+            type,
+            tags,
+            createUserId,
+            modifyUserId,
+            createTime,
+            modifyTime,
+            isValid
+        FROM T_LOG_CONFIG;
+    </select>
     <insert id="insert">
         INSERT INTO T_LOG_CONFIG
         (
+            log_id,
+            IP,
             name,
-            ip,
-            path
+            path,
+            type,
+            tags,
+            createUserId,
+            modifyUserId,
+            createTime,
+            modifyTime,
+            isValid
         )
         VALUES
             (
+                #{logConfig.logId},
+                #{logConfig.IP},
                 #{logConfig.name},
-                #{logConfig.ip},
-                #{logConfig.path}
+                #{logConfig.path},
+                #{logConfig.type},
+                #{logConfig.tags},
+                #{logConfig.createUserId},
+                #{logConfig.modifyUserId},
+                #{logConfig.createTime},
+                #{logConfig.modifyTime},
+                #{logConfig.isValid}
             )
     </insert>
 </mapper>
