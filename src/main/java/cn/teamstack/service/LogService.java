@@ -2,14 +2,13 @@ package cn.teamstack.service;
 
 import cn.teamstack.common.core.ack.ACK;
 import cn.teamstack.common.core.ack.AppCode;
+import cn.teamstack.common.core.bean.PageResponse;
 import cn.teamstack.common.core.exception.AppException;
 import cn.teamstack.common.core.util.IdentityHelper;
-import cn.teamstack.dto.response.ConfigResp;
+import cn.teamstack.dto.request.ConfigReq;
 import cn.teamstack.entity.LogConfig;
 import cn.teamstack.repository.LogMapper;
-import cn.teamstack.utils.DateUtil;
 import com.alibaba.fastjson.JSON;
-import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,9 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by zhouli on 2017/8/12.
@@ -55,14 +52,25 @@ public class LogService {
         return logConfig;
     }
 
-    public List<LogConfig> getList() {
-        List<LogConfig>  list=logMapper.find();
-        List<ConfigResp> resps= Lists.newArrayList();
-        List<ConfigResp> children= Lists.newArrayList();
-        list.forEach(l->{
+    public void edit(LogConfig logConfig) {
 
-        });
-        logger.info("list:{}",JSON.toJSONString(list));
-        return list;
     }
+
+    public PageResponse getList(ConfigReq configReq) {
+        if (configReq == null) {
+            configReq = new ConfigReq();
+            configReq.setPage(1);
+            configReq.setPageSize(20);
+        } else if (configReq.getPage() == null
+                || configReq.getPageSize() == null) {
+            configReq.setPage(1);
+            configReq.setPageSize(20);
+        }
+
+        long total = logMapper.count();
+        List<LogConfig> list = logMapper.find(configReq);
+        return new PageResponse<>(list, total, configReq.getPage(), configReq.getPageSize());
+    }
+
+
 }

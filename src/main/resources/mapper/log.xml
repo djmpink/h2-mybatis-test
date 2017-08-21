@@ -18,7 +18,9 @@
             id = #{id}
     </select>
     <select id="find" resultMap="resultMap">
-        SELECT log_id,
+        SELECT
+            id,
+            log_id,
             IP,
             name,
             path,
@@ -29,6 +31,13 @@
             createTime,
             modifyTime,
             isValid
+        FROM T_LOG_CONFIG WHERE 1=1
+        ORDER BY createTime DESC
+        LIMIT #{configReq.offset},
+        #{configReq.pageSize}
+    </select>
+    <select id="count" resultType="java.lang.Long">
+        SELECT count(1)
         FROM T_LOG_CONFIG;
     </select>
     <insert id="insert">

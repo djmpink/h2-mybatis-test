@@ -5,7 +5,7 @@ package cn.teamstack.common.core.bean;
  *
  * @author Administrator
  */
-public class PageRequst extends BaseBean {
+public class PageRequest extends BaseBean {
 
     /**
      *
@@ -16,6 +16,7 @@ public class PageRequst extends BaseBean {
     private Integer pageSize;
     private Integer start;
     private Integer total;
+    private Integer offset;
 
     public Integer getPage() {
         return page;
@@ -49,4 +50,11 @@ public class PageRequst extends BaseBean {
         this.total = total;
     }
 
+    public Integer getOffset() {
+        return (page - 1) * pageSize;
+    }
+
+    public void setOffset(Integer offset) {
+        this.offset = offset;
+    }
 }

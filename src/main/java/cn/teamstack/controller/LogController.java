@@ -1,6 +1,7 @@
 package cn.teamstack.controller;
 
 import cn.teamstack.common.core.bean.Response;
+import cn.teamstack.dto.request.ConfigReq;
 import cn.teamstack.entity.LogConfig;
 import cn.teamstack.service.LogService;
 import io.swagger.annotations.ApiOperation;
@@ -18,7 +19,7 @@ import javax.annotation.Resource;
  * Created by zhouli on 2017/8/15.
  */
 @RestController
-@RequestMapping("/log")
+@RequestMapping("v1/log")
 public class LogController {
     private static final Logger logger = LoggerFactory.getLogger(LogController.class);
 
@@ -26,9 +27,9 @@ public class LogController {
     private LogService logService;
 
     @ApiOperation(value = "获取日志配置列表", notes = "获取日志配置列表")
-    @RequestMapping( value = "config/list",method = RequestMethod.GET)
-    public Response getList() {
-        return Response.success(logService.getList());
+    @RequestMapping( value = "config/list",method = RequestMethod.POST)
+    public Response getList(@RequestBody ConfigReq configReq) {
+        return Response.success(logService.getList(configReq));
     }
 
     //获取日志配置详情
@@ -40,6 +41,11 @@ public class LogController {
     }
 
     //编辑日志配置
+    @ApiOperation(value = "新增日志配置", notes = "新增日志配置")
+    @RequestMapping(value = "config/edit",method = RequestMethod.POST)
+    public Response edit(@RequestBody LogConfig logConfig) {
+        return Response.success(logService.edit(logConfig));
+    }
 
     //日志文件下载
 

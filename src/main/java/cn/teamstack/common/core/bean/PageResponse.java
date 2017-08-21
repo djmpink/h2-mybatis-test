@@ -3,7 +3,7 @@ package cn.teamstack.common.core.bean;
 import java.io.Serializable;
 import java.util.List;
 
-public class PageRespnose<T> implements Serializable {
+public class PageResponse<T> implements Serializable {
 
     /**
      *
@@ -15,15 +15,15 @@ public class PageRespnose<T> implements Serializable {
     private int page;
     private int pageSize;
 
-    public PageRespnose() {
+    public PageResponse() {
     }
 
-    public PageRespnose(List<T> list, long total) {
+    public PageResponse(List<T> list, long total) {
         this.list = list;
         this.total = total;
     }
 
-    public PageRespnose(List<T> list, long total, int page, int pageSize) {
+    public PageResponse(List<T> list, long total, int page, int pageSize) {
         this.list = list;
         this.total = total;
         this.page = page;

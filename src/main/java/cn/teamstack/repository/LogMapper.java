@@ -1,5 +1,7 @@
 package cn.teamstack.repository;
 
+import cn.teamstack.dto.request.ConfigReq;
+import cn.teamstack.dto.response.ConfigResp;
 import cn.teamstack.entity.LogConfig;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -15,5 +17,7 @@ public interface LogMapper {
 
     void insert(@Param("logConfig") LogConfig logConfig);
 
-    List<LogConfig> find();
+    List<LogConfig> find(@Param("configReq") ConfigReq configReq);
+
+    Long count();
 }
