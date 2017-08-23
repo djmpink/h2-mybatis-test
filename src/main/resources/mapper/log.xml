@@ -15,36 +15,43 @@
             path
         FROM T_LOG_CONFIG
         WHERE
-            id = #{id}
+            log_id = #{logId}
     </select>
+
     <select id="find" resultMap="resultMap">
         SELECT
-            id,
-            log_id,
-            IP,
-            name,
-            path,
-            type,
-            tags,
-            createUserId,
-            modifyUserId,
-            createTime,
-            modifyTime,
-            isValid
-        FROM T_LOG_CONFIG WHERE 1=1
+        id,
+        log_id,
+        ip,
+        name,
+        path,
+        type,
+        tags,
+        createUserId,
+        modifyUserId,
+        createTime,
+        modifyTime,
+        isValid
+        FROM T_LOG_CONFIG
+        WHERE 1 = 1
         ORDER BY createTime DESC
-        LIMIT #{configReq.offset},
-        #{configReq.pageSize}
+        <if test="offset != null and pageSize!= null">
+            <![CDATA[
+                LIMIT #{offset},#{pageSize}
+            ]]>
+        </if>
     </select>
+
     <select id="count" resultType="java.lang.Long">
         SELECT count(1)
         FROM T_LOG_CONFIG;
     </select>
-    <insert id="insert">
+
+    <insert id="insert" parameterType="cn.teamstack.entity.LogConfig">
         INSERT INTO T_LOG_CONFIG
         (
             log_id,
-            IP,
+            ip,
             name,
             path,
             type,
@@ -57,17 +64,31 @@
         )
         VALUES
             (
-                #{logConfig.logId},
-                #{logConfig.IP},
-                #{logConfig.name},
-                #{logConfig.path},
-                #{logConfig.type},
-                #{logConfig.tags},
-                #{logConfig.createUserId},
-                #{logConfig.modifyUserId},
-                #{logConfig.createTime},
-                #{logConfig.modifyTime},
-                #{logConfig.isValid}
+                #{logId},
+                #{ip},
+                #{name},
+                #{path},
+                #{type},
+                #{tags},
+                #{createUserId},
+                #{modifyUserId},
+                #{createTime},
+                #{modifyTime},
+                #{isValid}
             )
     </insert>
+
+    <update id="update" parameterType="cn.teamstack.entity.LogConfig">
+        UPDATE T_LOG_CONFIG
+        <set>
+            <if test="ip != null"> ip= #{ip},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="path != null">path = #{path},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="tags != null">tags = #{tags},</if>
+            <if test="modifyUserId != null">modifyUserId = #{modifyUserId},</if>
+            <if test="modifyTime != null">modifyTime = #{modifyTime}</if>
+        </set>
+        WHERE log_id = #{logConfig.logId}
+    </update>
 </mapper>

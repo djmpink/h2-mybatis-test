@@ -13,11 +13,13 @@ import java.util.List;
  */
 @Mapper
 public interface LogMapper {
-    LogConfig findById(@Param("id") Integer id);
+    LogConfig findById(@Param("logId") String logId);
 
-    void insert(@Param("logConfig") LogConfig logConfig);
+    void insert(LogConfig logConfig);
 
-    List<LogConfig> find(@Param("configReq") ConfigReq configReq);
+    List<LogConfig> find(@Param("offset") Integer offset, @Param("pageSize") Integer pageSize);
 
     Long count();
+
+    void update(LogConfig logConfig);
 }

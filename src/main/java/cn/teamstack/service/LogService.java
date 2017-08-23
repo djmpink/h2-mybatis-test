@@ -28,8 +28,8 @@ public class LogService {
     @Autowired
     private LogMapper logMapper;
 
-    public LogConfig getById(Integer id) {
-        LogConfig logConfig = logMapper.findById(id);
+    public LogConfig getById(String logId) {
+        LogConfig logConfig = logMapper.findById(logId);
         logger.info("logConfig:{}", JSON.toJSONString(logConfig));
         return logConfig;
     }
@@ -53,10 +53,22 @@ public class LogService {
     }
 
     public void edit(LogConfig logConfig) {
-
+        if (logConfig == null) {
+            throw new AppException(AppCode.MAPI_CODE, ACK.REQUEST_PARAMETER_MISS);
+        }
+        if (StringUtils.isEmpty(logConfig.name)) {
+            throw new AppException(AppCode.MAPI_CODE, ACK.REQUEST_PARAMETER_MISS);
+        }
+        if (StringUtils.isEmpty(logConfig.path)) {
+            throw new AppException(AppCode.MAPI_CODE, ACK.REQUEST_PARAMETER_MISS);
+        }
+        logConfig.createTime = new Date();
+        logConfig.modifyTime = new Date();
+        logConfig.isValid = true;
+        logMapper.update(logConfig);
     }
 
-    public PageResponse getList(ConfigReq configReq) {
+    public PageResponse list(ConfigReq configReq) {
         if (configReq == null) {
             configReq = new ConfigReq();
             configReq.setPage(1);
@@ -68,9 +80,11 @@ public class LogService {
         }
 
         long total = logMapper.count();
-        List<LogConfig> list = logMapper.find(configReq);
+        List<LogConfig> list = logMapper.find(configReq.getOffset(),configReq.getPageSize());
         return new PageResponse<>(list, total, configReq.getPage(), configReq.getPageSize());
     }
-
+    public List<LogConfig> dropdown() {
+        return logMapper.find(null,null);
+    }
 
 }

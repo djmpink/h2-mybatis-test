@@ -7,9 +7,12 @@ import cn.teamstack.common.core.bean.BaseBean;
  */
 public class LogConfig extends BaseBean {
 
+    public LogConfig() {
+    }
+
     public Integer id;//主键id(自增)
     public String logId;//业务Id
-    public String IP;//日志服务器ip
+    public String ip;//日志服务器ip
     public String name;//配置命名
     public String path;//日志文件路径
     public String type;//日志类型
@@ -31,12 +34,12 @@ public class LogConfig extends BaseBean {
         this.logId = logId;
     }
 
-    public String getIP() {
-        return IP;
+    public String getIp() {
+        return ip;
     }
 
-    public void setIP(String IP) {
-        this.IP = IP;
+    public void setIp(String ip) {
+        this.ip = ip;
     }
 
     public String getName() {

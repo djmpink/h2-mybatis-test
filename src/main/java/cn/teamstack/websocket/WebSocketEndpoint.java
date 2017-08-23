@@ -2,6 +2,7 @@ package cn.teamstack.websocket;
 
 import cn.teamstack.dto.request.WebSocketReq;
 import cn.teamstack.service.LogService;
+import cn.teamstack.utils.StringUtil;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
@@ -75,8 +76,11 @@ public class WebSocketEndpoint implements ApplicationContextAware {
     // 执行tail -f命令
     private void tailLogs(String message, Session session) {
         System.out.println("执行tail -f命令:" + message);
+        if (StringUtils.isEmpty(message)) {
+            return;
+        }
         LogService logService = (LogService) applicationContext.getBean("logService");
-        String logPath = logService.getById(1).path;
+        String logPath = logService.getById(message).path;
         logger.info("日志路径：{}", logPath);
         try {
             process = Runtime.getRuntime().exec("tail -f " + logPath);
@@ -95,7 +99,7 @@ public class WebSocketEndpoint implements ApplicationContextAware {
                 return;
             }
             LogService logService = (LogService) applicationContext.getBean("logService");
-            String logPath = logService.getById(1).path;
+            String logPath = logService.getById("2ebc88b9-444f-4f11-8a48-7d96c32ac58a").path;
             logPath = logPath.substring(0, logPath.lastIndexOf("/"));
             logger.info("日志路径：{}", logPath);
             File dir = new File(logPath);//只能在日志目录执行对应命令
@@ -126,13 +130,13 @@ public class WebSocketEndpoint implements ApplicationContextAware {
                 return;
             }
             LogService logService = (LogService) applicationContext.getBean("logService");
-            String logPath = logService.getById(1).path;
+            String logPath = logService.getById("2ebc88b9-444f-4f11-8a48-7d96c32ac58a").path;
             logger.info("日志路径：{}", logPath);
 
             List<String> cmds = Lists.newArrayList();
             cmds.add("/bin/sh");
             cmds.add("-c");
-            cmds.add("grep " + value +" "+ logPath);
+            cmds.add("grep " + value + " " + logPath);
 
             String[] c = cmds.toArray(new String[cmds.size()]);
             logger.info("c:{}", JSON.toJSONString(c));
