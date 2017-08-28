@@ -61,26 +61,26 @@ public class WebSocketEndpoint implements ApplicationContextAware {
             logger.info("req:{}", JSON.toJSONString(req));
             switch (req.order) {
                 case "tail":
-                    tailLogs(req.content, session);
+                    tailLogs(req, session);
                     break;
                 case "cmd":
-                    cmdInfo(req.content, session);
+                    cmdInfo(req, session);
                     break;
                 case "search":
-                    search(req.content, session);
+                    search(req, session);
                     break;
             }
         }
     }
 
     // 执行tail -f命令
-    private void tailLogs(String message, Session session) {
-        System.out.println("执行tail -f命令:" + message);
-        if (StringUtils.isEmpty(message)) {
+    private void tailLogs(WebSocketReq req, Session session) {
+        System.out.println("执行tail -f命令:" + req.content);
+        if (StringUtils.isEmpty(req.content)) {
             return;
         }
         LogService logService = (LogService) applicationContext.getBean("logService");
-        String logPath = logService.getById(message).path;
+        String logPath = logService.getById(req.id).path;
         logger.info("日志路径：{}", logPath);
         try {
             process = Runtime.getRuntime().exec("tail -f " + logPath);
@@ -93,13 +93,14 @@ public class WebSocketEndpoint implements ApplicationContextAware {
         }
     }
 
-    private void cmdInfo(String cmd, Session session) {
+    private void cmdInfo(WebSocketReq req, Session session) {
         try {
-            if (StringUtils.isEmpty(cmd)) {
+            if (StringUtils.isEmpty(req.content)) {
                 return;
             }
+            String cmd=req.content;
             LogService logService = (LogService) applicationContext.getBean("logService");
-            String logPath = logService.getById("2ebc88b9-444f-4f11-8a48-7d96c32ac58a").path;
+            String logPath = logService.getById(req.id).path;
             logPath = logPath.substring(0, logPath.lastIndexOf("/"));
             logger.info("日志路径：{}", logPath);
             File dir = new File(logPath);//只能在日志目录执行对应命令
@@ -124,19 +125,19 @@ public class WebSocketEndpoint implements ApplicationContextAware {
         }
     }
 
-    private void search(String value, Session session) {
+    private void search(WebSocketReq req, Session session) {
         try {
-            if (StringUtils.isEmpty(value)) {
+            if (StringUtils.isEmpty(req.content)) {
                 return;
             }
             LogService logService = (LogService) applicationContext.getBean("logService");
-            String logPath = logService.getById("2ebc88b9-444f-4f11-8a48-7d96c32ac58a").path;
+            String logPath = logService.getById(req.id).path;
             logger.info("日志路径：{}", logPath);
 
             List<String> cmds = Lists.newArrayList();
             cmds.add("/bin/sh");
             cmds.add("-c");
-            cmds.add("grep " + value + " " + logPath);
+            cmds.add("grep " + req.content + " " + logPath);
 
             String[] c = cmds.toArray(new String[cmds.size()]);
             logger.info("c:{}", JSON.toJSONString(c));
