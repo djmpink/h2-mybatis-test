@@ -39,6 +39,13 @@ public class LogController {
     }
 
 
+    @ApiOperation(value = "根据id获取日志对象", notes = "根据id获取日志对象")
+    @RequestMapping(value = "config/path/{id}", method = RequestMethod.GET)
+    public Response getPathLogs(@PathVariable("id") String logId) {
+
+        return Response.success(logService.getFiles(logId));
+    }
+
     @ApiOperation(value = "新增日志配置", notes = "新增日志配置")
     @RequestMapping(value = "config/add", method = RequestMethod.POST)
     public Response add(@RequestBody LogConfig logConfig) {
@@ -46,17 +53,25 @@ public class LogController {
     }
 
     @ApiOperation(value = "新增日志配置", notes = "新增日志配置")
-    @RequestMapping(value = "config/edit", method = RequestMethod.POST)
-    public Response edit(@RequestBody LogConfig logConfig) {
-        logService.edit(logConfig);
+    @RequestMapping(value = "config/{id}/edit", method = RequestMethod.POST)
+    public Response edit(@PathVariable("id") String logId,
+                         @RequestBody LogConfig logConfig) {
+        logService.edit(logId,logConfig);
+        return Response.success();
+    }
+
+    @ApiOperation(value = "新增日志配置", notes = "新增日志配置")
+    @RequestMapping(value = "config/{id}/remove", method = RequestMethod.POST)
+    public Response remove(@PathVariable("id") String logId) {
+        logService.remove(logId);
         return Response.success();
     }
 
     @ApiOperation(value = "根据id获取日志对象", notes = "根据id获取日志对象")
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public LogConfig getById(@PathVariable("id") String logId) {
+    public Response getById(@PathVariable("id") String logId) {
         logger.info("getById：{}", logId);
-        return logService.getById(logId);
+        return Response.success(logService.getById(logId));
     }
 
     //日志文件下载

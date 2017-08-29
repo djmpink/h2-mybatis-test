@@ -83,7 +83,7 @@ public class WebSocketEndpoint implements ApplicationContextAware {
         String logPath = logService.getById(req.id).path;
         logger.info("日志路径：{}", logPath);
         try {
-            process = Runtime.getRuntime().exec("tail -f " + logPath);
+            process = Runtime.getRuntime().exec("tail -50f " + logPath);
             inputStream = process.getInputStream();
             // 启动新的线程，防止InputStream阻塞处理WebSocket的线程
             SendThread thread = new SendThread(inputStream, session);

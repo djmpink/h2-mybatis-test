@@ -8,11 +8,13 @@
         <result column="path" property="path"/>
     </resultMap>
 
+    <delete id="delete">
+        DELETE FROM T_LOG_CONFIG WHERE log_id = #{logId}
+    </delete>
+
     <select id="findById" resultMap="resultMap">
         SELECT
-            id,
-            name,
-            path
+            *
         FROM T_LOG_CONFIG
         WHERE
             log_id = #{logId}
@@ -89,6 +91,6 @@
             <if test="modifyUserId != null">modifyUserId = #{modifyUserId},</if>
             <if test="modifyTime != null">modifyTime = #{modifyTime}</if>
         </set>
-        WHERE log_id = #{logConfig.logId}
+        WHERE log_id = #{logId}
     </update>
 </mapper>

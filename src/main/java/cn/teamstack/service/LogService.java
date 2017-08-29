@@ -9,12 +9,15 @@ import cn.teamstack.dto.request.ConfigReq;
 import cn.teamstack.entity.LogConfig;
 import cn.teamstack.repository.LogMapper;
 import com.alibaba.fastjson.JSON;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import sun.rmi.runtime.Log;
 
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 
@@ -52,20 +55,33 @@ public class LogService {
         return logConfig;
     }
 
-    public void edit(LogConfig logConfig) {
-        if (logConfig == null) {
+    public void edit(String logId, LogConfig config) {
+        if (config == null) {
             throw new AppException(AppCode.MAPI_CODE, ACK.REQUEST_PARAMETER_MISS);
         }
-        if (StringUtils.isEmpty(logConfig.name)) {
+        if (StringUtils.isEmpty(logId)) {
             throw new AppException(AppCode.MAPI_CODE, ACK.REQUEST_PARAMETER_MISS);
         }
-        if (StringUtils.isEmpty(logConfig.path)) {
+        if (StringUtils.isEmpty(config.name)) {
             throw new AppException(AppCode.MAPI_CODE, ACK.REQUEST_PARAMETER_MISS);
         }
+        if (StringUtils.isEmpty(config.path)) {
+            throw new AppException(AppCode.MAPI_CODE, ACK.REQUEST_PARAMETER_MISS);
+        }
+        logger.info("config:{}", JSON.toJSONString(config));
+        LogConfig logConfig = logMapper.findById(logId);
+        logConfig.ip = config.ip;
+        logConfig.name = config.name;
+        logConfig.path = config.path;
+        logConfig.tags = config.tags;
         logConfig.createTime = new Date();
         logConfig.modifyTime = new Date();
-        logConfig.isValid = true;
+        logger.info("logConfig:{}", JSON.toJSONString(logConfig));
         logMapper.update(logConfig);
+    }
+
+    public void remove(String logId) {
+        logMapper.delete(logId);
     }
 
     public PageResponse list(ConfigReq configReq) {
@@ -80,11 +96,46 @@ public class LogService {
         }
 
         long total = logMapper.count();
-        List<LogConfig> list = logMapper.find(configReq.getOffset(),configReq.getPageSize());
+        List<LogConfig> list = logMapper.find(configReq.getOffset(), configReq.getPageSize());
         return new PageResponse<>(list, total, configReq.getPage(), configReq.getPageSize());
     }
+
     public List<LogConfig> dropdown() {
-        return logMapper.find(null,null);
+        return logMapper.find(null, null);
     }
 
+    public List<String> getFiles(String logId) {
+        LogConfig logConfig = logMapper.findById(logId);
+        String path = logConfig.path; // 路径
+        logger.info("path：{}", path);
+        List<String> files = Lists.newArrayList();
+        if (path.endsWith(".log")) {
+            String file = path.substring(path.lastIndexOf("/") + 1);
+            files.add(file);
+            return files;
+        }
+
+        File f = new File(path);
+        if (!f.exists()) {
+            System.out.println(path + " not exists");
+            return files;
+        }
+
+        File fa[] = f.listFiles();
+        if (fa == null || fa.length == 0) {
+            System.out.println("file not exists");
+            return files;
+        }
+        for (File fs : fa) {
+            if (fs.isDirectory()) {
+                System.out.println(fs.getName() + " [目录]");
+            } else {
+                System.out.println(fs.getName());
+                if (fs.getName().endsWith(".log")) {
+                    files.add(fs.getName());
+                }
+            }
+        }
+        return files;
+    }
 }

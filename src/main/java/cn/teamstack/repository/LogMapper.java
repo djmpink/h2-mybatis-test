@@ -22,4 +22,6 @@ public interface LogMapper {
     Long count();
 
     void update(LogConfig logConfig);
+
+    void delete(@Param("logId") String logId);
 }
