@@ -60,6 +60,9 @@ public class WebSocketEndpoint implements ApplicationContextAware {
             WebSocketReq req = JSON.parseObject(message, WebSocketReq.class);
             logger.info("req:{}", JSON.toJSONString(req));
             switch (req.order) {
+                case "ssh":
+                    ssh(req, session);
+                    break;
                 case "tail":
                     tailLogs(req, session);
                     break;
@@ -70,6 +73,33 @@ public class WebSocketEndpoint implements ApplicationContextAware {
                     search(req, session);
                     break;
             }
+        }
+    }
+
+    private void ssh(WebSocketReq req, Session session) {
+        try {
+            if (StringUtils.isEmpty(req.content)) {
+                return;
+            }
+            String cmd=req.content;
+
+            List<String> cmds = Lists.newArrayList();
+            cmds.add("/bin/sh");
+            cmds.add("-c");
+            cmds.add(cmd);
+
+            String[] c = cmds.toArray(new String[cmds.size()]);
+            logger.info("c:{}", JSON.toJSONString(c));
+            process = Runtime.getRuntime().exec(c);
+
+            InputStream inputStream = process.getInputStream();
+
+            // 启动新的线程，防止InputStream阻塞处理WebSocket的线程
+            SendThread thread = new SendThread(inputStream, session);
+            thread.start();
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
